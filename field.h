@@ -77,7 +77,7 @@ public:
 
 class FieldConstants {
 public:
-    const Number field_p;
+    secp256k1_num_t field_p;
 
     FieldConstants();
 };

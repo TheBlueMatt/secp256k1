@@ -363,7 +363,9 @@ static const unsigned char field_p_[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
                                          0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
                                          0xFF,0xFF,0xFF,0xFE,0xFF,0xFF,0xFC,0x2F};
 
-FieldConstants::FieldConstants() : field_p(field_p_, sizeof(field_p_)) {}
+FieldConstants::FieldConstants() {
+    secp256k1_num_set_bin(&field_p, field_p_, sizeof(field_p_));
+}
 
 const FieldConstants &GetFieldConst() {
     static const FieldConstants field_const;
@@ -408,10 +410,10 @@ void FieldElem::SetInverse(FieldElem &a) {
     a.Normalize();
     a.GetBytes(b);
     {
-        const Number &p = GetFieldConst().field_p;
-        Number n; n.SetBytes(b, 32);
-        n.SetModInverse(n, p);
-        n.GetBytes(b, 32);
+        const secp256k1_num_t &p = GetFieldConst().field_p;
+        secp256k1_num_t n; secp256k1_num_set_bin(&n, b, 32);
+        secp256k1_num_mod_inverse(&n, &n, &p);
+        secp256k1_num_get_bin(b, 32, &n);
     }
     SetBytes(b);
 #endif

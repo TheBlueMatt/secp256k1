@@ -214,6 +214,17 @@ int secp256k1_ecdsa_pubkey_decompress(unsigned char *pubkey, int *pubkeylen) {
     return 1;
 }
 
+int secp256k1_ecdsa_pubkey_compress(unsigned char *pubkey, int *pubkeylen) {
+    DEBUG_CHECK(pubkey != NULL);
+    DEBUG_CHECK(pubkeylen != NULL);
+
+    secp256k1_ge_t p;
+    if (!secp256k1_ecdsa_pubkey_parse(&p, pubkey, *pubkeylen))
+        return 0;
+    secp256k1_ecdsa_pubkey_serialize(&p, pubkey, pubkeylen, 1);
+    return 1;
+}
+
 int secp256k1_ecdsa_privkey_tweak_add(unsigned char *seckey, const unsigned char *tweak) {
     DEBUG_CHECK(seckey != NULL);
     DEBUG_CHECK(tweak != NULL);
